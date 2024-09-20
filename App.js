@@ -1,24 +1,41 @@
-// App.js
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import NroEmergencia from './src/use/Nro.Emergencia';
-import contactos from './src/use/contactos';
-import Pantalla3 from './src/use/pantalla3';
-import Pantalla4 from './src/use/pantalla4';
+import * as React from 'react'
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import NroEmergencia from './src/views/NroEmergencia'
+import pantallaBase from './src/views/pantallaBase'
+import informacion from './src/views/informacion'
+import contactos from './src/views/contactos'
+import Scan from './src/views/scan';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator()
 
-export default function App() {
-  return (
+function MyStack(){
+  return(
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Nro.Emergencia">
-        <Stack.Screen name="Nro.Emergencia" component={NroEmergencia} />
-        <Stack.Screen name="contactos" component={contactos} />
-        <Stack.Screen name="pantalla3" component={Pantalla3} />
-        <Stack.Screen name="pantalla4" component={Pantalla4} />
+      <Stack.Navigator initialRouteName="pantallaBase">
+        <Stack.Screen 
+          name="pantallaBase"
+          component={pantallaBase}
+        />  
+        <Stack.Screen
+          name="NroEmergencia"
+          component={NroEmergencia}
+        />
+          <Stack.Screen 
+          name='Scan'
+          component={Scan}
+        />
+        <Stack.Screen
+          name='informacion'
+          component={informacion}
+        />
+        <Stack.Screen
+          name='contactos'
+          component={contactos}
+        />
       </Stack.Navigator>
     </NavigationContainer>
-  );
+  )
 }
 
+export default MyStack
