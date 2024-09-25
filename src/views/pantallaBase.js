@@ -1,31 +1,37 @@
 import React from 'react';
 import { View, Button, StyleSheet, ScrollView } from 'react-native';
 
-const pantallaBase = ({ navigation }) => {
+const Home = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.buttonContainer}>
         <Button 
-          title="Numero de Emergencia" 
-          onPress={() => navigation.navigate('NroEmergencia')} 
+          title="Emergencia" 
+          onPress={() => navigation.navigate('emergencia')} 
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button 
+          title="Scan" 
+          onPress={() => navigation.navigate('scan')} 
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button 
+          title="Info" 
+          onPress={() => navigation.navigate('info')} 
         />
       </View>
       <View style={styles.buttonContainer}>
         <Button 
           title="Contacto" 
-          onPress={() => navigation.navigate('contactos')} 
+          onPress={() => navigation.navigate('contacto')} 
         />
       </View>
       <View style={styles.buttonContainer}>
         <Button 
-          title="Hora + Temperatura" 
-          onPress={() => navigation.navigate('informacion')} 
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button 
-          title="Identificación de cada Aplicación" 
-          onPress={() => navigation.navigate('scan')} 
+          title="About" 
+          onPress={() => navigation.navigate('about')} 
         />
       </View>
     </ScrollView>
@@ -35,41 +41,15 @@ const pantallaBase = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#e6e6fa', // Light lavender background
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '600',
-    marginBottom: 30,
-    color: '#b0082', // Indigo text color
+    paddingVertical: 20,
+    backgroundColor: '#f8f8f8',
   },
   buttonContainer: {
-    width: '50%', // Adjusted width
-    marginVertical: 15,
-    borderRadius: 8,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  button: {
-    color: '#90ec12', // Green color for buttons
-    paddingVertical: 10, // Smaller height
-    borderRadius: 5, // Rounded corners for buttons
-  },
-  buttonText: {
-    color: '#fff', // White text color
-    textAlign: 'center',
-    fontSize: 16,
+    width: '80%',
+    marginVertical: 10,
   },
 });
 
-export default pantallaBase;
+export default Home;

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { mostrarErrorConVibracion } from './helpers/mensajesHelper'; // Importamos el helper
 
 const Emergencia = () => {
   const [telefono, setTelefono] = useState('');
   const [telefonoGuardado, setTelefonoGuardado] = useState('');
-  const [error, setError] = useState('');
 
   useEffect(() => {
     const cargarNumeroEmergencia = async () => {
@@ -17,49 +15,44 @@ const Emergencia = () => {
           setTelefono(numeroGuardado); 
         }
       } catch (error) {
-        mostrarErrorConVibracion('Error', 'No se pudo cargar el número de emergencia');
+        Alert.alert('Error', 'No se pudo cargar el número de emergencia');
       }
     };
     cargarNumeroEmergencia();
   }, []);
 
+  // Guardar el número en AsyncStorage
   const guardarNumeroEmergencia = async () => {
     if (validarTelefono(telefono)) {
       try {
         await AsyncStorage.setItem('nroEmergencia', telefono);
         setTelefonoGuardado(telefono);
-        setError('');
-        mostrarErrorConVibracion('Guardado', 'El número de emergencia ha sido guardado');
+        Alert.alert('Guardado', 'El número de emergencia ha sido guardado');
       } catch (error) {
-        mostrarErrorConVibracion('Error', 'No se pudo guardar el número de emergencia');
+        Alert.alert('Error', 'No se pudo guardar el número de emergencia');
       }
     } else {
-      setError('Por favor, ingresa un número de teléfono válido (10 dígitos)');
-      mostrarErrorConVibracion('Error', 'Número de teléfono inválido, debe tener 10 dígitos');
+      Alert.alert('Error', 'Por favor, ingresa un número de teléfono válido');
     }
   };
 
+  // Validación del número de teléfono
   const validarTelefono = (numero) => {
-    const regexTelefono = /^[0-9]{10}$/; // Valida un número de teléfono con 10 dígitos
+    const regexTelefono = /^[0-9]{10}$/;
     return regexTelefono.test(numero);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Configuración de Nro. Emergencia</Text>
-      
       <TextInput
-        style={[styles.input, error ? styles.inputError : null]}
+        style={styles.input}
         placeholder="Ingresa el número de emergencia"
         keyboardType="phone-pad"
         value={telefono}
-        onChangeText={(value) => { setTelefono(value); setError(''); }} // Resetea el error al escribir
+        onChangeText={setTelefono}
       />
-      
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
       <Button title="Guardar Número" onPress={guardarNumeroEmergencia} />
-      
       {telefonoGuardado ? (
         <Text style={styles.savedText}>Número guardado: {telefonoGuardado}</Text>
       ) : null}
@@ -86,15 +79,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  inputError: {
-    borderColor: 'red',
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-    textAlign: 'center',
+    marginBottom: 20,
   },
   savedText: {
     marginTop: 20,

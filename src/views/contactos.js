@@ -2,39 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Contacts from 'expo-contacts';
-import { Ionicons } from '@expo/vector-icons'; // Asegúrate de tener instalada la librería
 
-const Contacto = () => {
-  const [contactos, setContactos] = useState([]);
-  const [telefonoEmergencia, setTelefonoEmergencia] = useState('');
+const Contactos = () => {
+  const [listaContactos, setListaContactos] = useState([]);
+  const [nroEmergencia, setNroEmergencia] = useState('');
 
-  const limpiarNumero = (numero) => {
-    let numeroLimpio = numero.replace(/\s|-/g, '');
-    const match = numeroLimpio.match(/\d{11}/);
+  const normalizarNumero = (numero) => {
+    let limpio = numero.replace(/\s|-/g, '');
+    const match = limpio.match(/\d{11}/);
     return match ? match[0] : '';
   };
 
   useEffect(() => {
-    const cargarNumeroEmergencia = async () => {
+    const obtenerNroEmergencia = async () => {
       try {
-        let numeroGuardado = await AsyncStorage.getItem('nroEmergencia');
-        if (numeroGuardado) {
-          if (!numeroGuardado.startsWith('+549')) {
-            numeroGuardado = '+549' + numeroGuardado.replace(/^(\+54 9)/, '');
-          } else {
-            numeroGuardado = numeroGuardado.replace(/^(\+54 9)/, '+549');
-          }
-          setTelefonoEmergencia(limpiarNumero(numeroGuardado));
+        let numero = await AsyncStorage.getItem('nroEmergencia');
+        if (numero) {
+          numero = numero.startsWith('+549') ? numero : '+549' + numero;
+          setNroEmergencia(normalizarNumero(numero));
         }
       } catch (error) {
         Alert.alert('Error', 'No se pudo cargar el número de emergencia');
       }
     };
-    cargarNumeroEmergencia();
+    obtenerNroEmergencia();
   }, []);
 
   useEffect(() => {
-    const cargarContactos = async () => {
+    const obtenerContactos = async () => {
       const { status } = await Contacts.requestPermissionsAsync();
       if (status === 'granted') {
         const { data } = await Contacts.getContactsAsync({
@@ -42,44 +37,35 @@ const Contacto = () => {
         });
 
         if (data.length > 0) {
-          const contactosFiltrados = data.filter(contact => 
-            contact.name && contact.phoneNumbers && contact.phoneNumbers.length > 0
-          );
-          setContactos(contactosFiltrados);
+          const contactosValidos = data.filter(c => c.name && c.phoneNumbers?.length > 0);
+          setListaContactos(contactosValidos);
         }
       } else {
-        Alert.alert('Permiso denegado', 'No se pudo acceder a los contactos');
+        Alert.alert('Permiso denegado', 'Acceso a los contactos denegado');
       }
     };
-    cargarContactos();
+    obtenerContactos();
   }, []);
 
   const renderContacto = ({ item }) => {
-    const numerosLimpios = item.phoneNumbers?.map(phone => limpiarNumero(phone.number));
-    const esNumeroEmergencia = numerosLimpios?.some(num => num === telefonoEmergencia);
+    const numeros = item.phoneNumbers?.map(phone => normalizarNumero(phone.number));
+    const esEmergencia = numeros?.some(num => num === nroEmergencia);
 
     return (
-      <View style={[styles.contactoContainer, esNumeroEmergencia && styles.emergenciaBackground]}>
-        <View style={styles.contactoInfo}>
-          <Text style={styles.contactoNombre}>{item.name}</Text>
-          {item.phoneNumbers && (
-            <Text style={styles.contactoNumero}>
-              {item.phoneNumbers[0].number}
-            </Text>
-          )}
+      <View style={[styles.itemContacto, esEmergencia && styles.contactoEmergencia]}>
+        <View style={styles.detalleContacto}>
+          <Text style={styles.nombre}>{item.name}</Text>
+          <Text style={styles.numero}>{item.phoneNumbers[0]?.number}</Text>
         </View>
-        {esNumeroEmergencia && (
-          <Ionicons name="ios-warning" size={24} color="red" style={styles.emergenciaIcon} />
-        )}
       </View>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Contactos</Text>
+    <View style={styles.contenedor}>
+      <Text style={styles.titulo}>Lista de Contactos</Text>
       <FlatList
-        data={contactos}
+        data={listaContactos}
         keyExtractor={(item) => item.id}
         renderItem={renderContacto}
       />
@@ -88,43 +74,37 @@ const Contacto = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  contenedor: {
     flex: 1,
     padding: 20,
     backgroundColor: '#f8f8f8',
   },
-  title: {
+  titulo: {
     fontSize: 24,
-    fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
   },
-  contactoContainer: {
+  itemContacto: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
-  contactoInfo: {
+  detalleContacto: {
     flexDirection: 'column',
-    flex: 1,
   },
-  contactoNombre: {
+  nombre: {
     fontSize: 18,
     fontWeight: 'bold',
   },
-  contactoNumero: {
+  numero: {
     fontSize: 16,
     color: '#666',
   },
-  emergenciaBackground: {
-    backgroundColor: '#FFF3CD', // Color más sutil que el amarillo
-  },
-  emergenciaIcon: {
-    marginLeft: 10,
+  contactoEmergencia: {
+    backgroundColor: 'yellow',
   },
 });
 
-export default Contacto;
+export default Contactos;

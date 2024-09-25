@@ -1,62 +1,52 @@
 import React, { useState } from 'react';
 import { View, Text, Button, Modal, StyleSheet } from 'react-native';
-import SvgQRCode from 'react-native-qrcode-svg';  // Generador de QR
-import { BarCodeScanner } from 'expo-barcode-scanner';  // Escaneo de códigos QR
+import { RNCamera } from 'react-native-camera';
 
+const Scan = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [scannedData, setScannedData] = useState('');
+  const [isScanning, setIsScanning] = useState(false);
 
-const grupoActual = 'Integrantes: Pablo Zurbano, Simón Suken';
-
-const AboutScreen = () => {
-  const [scanned, setScanned] = useState(true);  // Estado para el escáner de QR
-  const [dataScanned, setDataScanned] = useState('');  // Estado para almacenar datos escaneados
-  const [modalVisible, setModalVisible] = useState(false);  // Estado para el Modal
-
-  const handleBarCodeScanned = ({ data }) => {
-    setScanned(true);  // Desactivar el escaneo tras leer un código
-    setDataScanned(data);  // Guardar los datos escaneados
-    setModalVisible(true);  // Mostrar el modal con los datos escaneados
+  const handleBarCodeRead = (e) => {
+    setScannedData(e.data);
+    setIsScanning(false);
+    setModalVisible(true);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Acerca de la Aplicación</Text>
+      <Text style={styles.title}>Acerca de</Text>
+      <Button title="Escanear otro QR" onPress={() => setIsScanning(true)} />
 
-      {/* Mostrar el QR del grupo */}
-      <Text style={styles.subtitle}>Código QR de la aplicación:</Text>
-      <SvgQRCode value={grupoActual} size={150} />
-
-      {/* Botón para escanear otro QR */}
-      <Button
-        title="Escanear QR de otra aplicación"
-        onPress={() => setScanned(false)}
-      />
-
-      {/* Escáner de código QR */}
-      {!scanned && (
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={styles.scanner}
-        />
-      )}
-
-      {/* Modal para mostrar los datos escaneados */}
+      {/* Modal para escanear */}
       <Modal
-        animationType="slide"
         transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
+        visible={isScanning}
+        animationType="slide"
+        onRequestClose={() => setIsScanning(false)}
       >
         <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Integrantes de la app escaneada:</Text>
-            <Text style={styles.scannedData}>{dataScanned}</Text>
-            <Button
-              title="Cerrar"
-              onPress={() => setModalVisible(false)}
-            />
-          </View>
+          <RNCamera
+            style={styles.camera}
+            onBarCodeRead={handleBarCodeRead}
+            captureAudio={false}
+          >
+            <Text style={styles.text}>Escanea el código QR</Text>
+            <Button title="Cancelar" onPress={() => setIsScanning(false)} />
+          </RNCamera>
+        </View>
+      </Modal>
+
+      {/* Modal para mostrar los resultados escaneados */}
+      <Modal
+        transparent={true}
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.scannedText}>Datos escaneados: {scannedData}</Text>
+          <Button title="Cerrar" onPress={() => setModalVisible(false)} />
         </View>
       </Modal>
     </View>
@@ -66,26 +56,13 @@ const AboutScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f8f8',
+    padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  scanner: {
-    width: '100%',
-    height: 300,
-    marginVertical: 20,
   },
   modalContainer: {
     flex: 1,
@@ -93,24 +70,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  modalContent: {
-    width: 300,
-    padding: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    alignItems: 'center',
+  camera: {
+    width: '100%',
+    height: '80%',
   },
-  modalText: {
+  text: {
+    color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  scannedData: {
-    fontSize: 16,
-    marginBottom: 20,
     textAlign: 'center',
+    margin: 20,
+  },
+  scannedText: {
+    color: '#000',
+    fontSize: 18,
+    marginBottom: 20,
   },
 });
 
-export default AboutScreen;
-``
+export default Scan;

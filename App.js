@@ -1,37 +1,42 @@
 import * as React from 'react'
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import NroEmergencia from './src/views/NroEmergencia'
-import pantallaBase from './src/views/pantallaBase'
-import informacion from './src/views/informacion'
-import contactos from './src/views/contactos'
-import Scan from './src/views/scan';
+import Emergencia from './src/views/emergencia'
+import Home from './src/views/home'
+import Scan from './src/views/scan'
+import Info from './src/views/info'
+import Contacto from './src/views/contactos'
+import About from './src/views/about';
 
 const Stack = createNativeStackNavigator()
 
 function MyStack(){
   return(
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="pantallaBase">
+      <Stack.Navigator initialRouteName="Home">
         <Stack.Screen 
-          name="pantallaBase"
-          component={pantallaBase}
+          name="Home"
+          component={Home}
         />  
         <Stack.Screen
-          name="NroEmergencia"
-          component={NroEmergencia}
+          name="emergencia"
+          component={Emergencia}
         />
-          <Stack.Screen 
-          name='Scan'
+        <Stack.Screen 
+          name='scan'
           component={Scan}
         />
         <Stack.Screen
-          name='informacion'
-          component={informacion}
+          name='info'
+          component={Info}
         />
         <Stack.Screen
-          name='contactos'
-          component={contactos}
+          name='contacto'
+          component={Contacto}
+        />
+        <Stack.Screen
+          name='about'
+          component={About}
         />
       </Stack.Navigator>
     </NavigationContainer>
