@@ -7,23 +7,23 @@ const Emergencia = () => {
   const [telefonoGuardado, setTelefonoGuardado] = useState('');
 
   useEffect(() => {
-const cargarNumeroEmergencia = async () => {
-  try {
-    const numeroGuardado = await AsyncStorage.getItem('nroEmergencia') || ''; 
-    setTelefono(numeroGuardado);
-    setTelefonoGuardado(numeroGuardado);
-  } catch (error) {
-    console.error('Error al cargar el número de emergencia:', error); 
-    Alert.alert('Error', 'No se pudo cargar el número de emergencia');
-  }
-};
+    const cargarNumeroEmergencia = async () => {
+      try {
+        const numeroGuardado = await AsyncStorage.getItem('nroEmergencia') || ''; 
+        setTelefono(numeroGuardado);
+        setTelefonoGuardado(numeroGuardado);
+      } catch (error) {
+        console.error('Error al cargar el número de emergencia:', error); 
+        Alert.alert('Error', 'No se pudo cargar el número de emergencia');
+      }
+    };
     cargarNumeroEmergencia();
   }, []);
 
-    const validarTelefono = (numero) => {
+  const validarTelefono = (numero) => {
     const regexTelefono = /^[0-9]{10}$/;
     return regexTelefono.test(numero);
-    };
+  };
 
   const guardarNumeroEmergencia = async () => {
     if (!validarTelefono(telefono)) {
@@ -34,7 +34,7 @@ const cargarNumeroEmergencia = async () => {
       setTelefonoGuardado(telefono);
       Alert.alert('Guardado', 'El número de emergencia ha sido guardado correctamente');
     } catch (error) {
-      console.error('Error al guardar el número de emergencia:', error); // Mensaje útil para depuración
+      console.error('Error al guardar el número de emergencia:', error);
       Alert.alert('Error', 'No se pudo guardar el número de emergencia');
     }
   };
@@ -62,21 +62,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 20,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#E6FFE6',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color: '#333',
   },
   input: {
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     paddingHorizontal: 10,
     marginBottom: 20,
+    backgroundColor: '#FFF',
   },
   savedText: {
     marginTop: 20,

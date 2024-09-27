@@ -18,7 +18,7 @@ const Scan = () => {
       <Text style={styles.title}>Acerca de</Text>
       <Button title="Escanear otro QR" onPress={() => setIsScanning(true)} />
 
-      {/* Modal para escanear */}
+      
       <Modal
         transparent={true}
         visible={isScanning}
@@ -37,7 +37,7 @@ const Scan = () => {
         </View>
       </Modal>
 
-      {/* Modal para mostrar datos escaneados */}
+      
       <Modal
         transparent={true}
         visible={modalVisible}
@@ -45,7 +45,7 @@ const Scan = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          <Text>Datos escaneados: {scannedData}</Text>
+          <Text style={styles.modalText}>Datos escaneados: {scannedData}</Text>
           <Button title="Cerrar" onPress={() => setModalVisible(false)} />
         </View>
       </Modal>
@@ -58,10 +58,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#E6F7FF',
   },
   title: {
     fontSize: 20,
     marginBottom: 20,
+    color: '#333',
   },
   camera: {
     flex: 1,
@@ -74,7 +76,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  text: {
+  modalText: {
     color: '#fff',
     fontSize: 18,
     marginBottom: 20,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { View, Text, StyleSheet, PermissionsAndroid, Platform, Alert } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
@@ -27,7 +27,6 @@ const Info = () => {
       }
     };
     
-
     requestLocationPermission();
 
     const interval = setInterval(() => {
@@ -91,10 +90,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: '#FFF9E6',
   },
   text: {
     fontSize: 18,
     marginVertical: 10,
+    color: '#333',
   },
 });
 
