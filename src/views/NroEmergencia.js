@@ -7,39 +7,36 @@ const Emergencia = () => {
   const [telefonoGuardado, setTelefonoGuardado] = useState('');
 
   useEffect(() => {
-    const cargarNumeroEmergencia = async () => {
-      try {
-        const numeroGuardado = await AsyncStorage.getItem('nroEmergencia');
-        if (numeroGuardado) {
-          setTelefonoGuardado(numeroGuardado);
-          setTelefono(numeroGuardado); 
-        }
-      } catch (error) {
-        Alert.alert('Error', 'No se pudo cargar el número de emergencia');
-      }
-    };
+const cargarNumeroEmergencia = async () => {
+  try {
+    const numeroGuardado = await AsyncStorage.getItem('nroEmergencia') || ''; 
+    setTelefono(numeroGuardado);
+    setTelefonoGuardado(numeroGuardado);
+  } catch (error) {
+    console.error('Error al cargar el número de emergencia:', error); 
+    Alert.alert('Error', 'No se pudo cargar el número de emergencia');
+  }
+};
     cargarNumeroEmergencia();
   }, []);
 
-  // Guardar el número en AsyncStorage
-  const guardarNumeroEmergencia = async () => {
-    if (validarTelefono(telefono)) {
-      try {
-        await AsyncStorage.setItem('nroEmergencia', telefono);
-        setTelefonoGuardado(telefono);
-        Alert.alert('Guardado', 'El número de emergencia ha sido guardado');
-      } catch (error) {
-        Alert.alert('Error', 'No se pudo guardar el número de emergencia');
-      }
-    } else {
-      Alert.alert('Error', 'Por favor, ingresa un número de teléfono válido');
-    }
-  };
-
-  // Validación del número de teléfono
-  const validarTelefono = (numero) => {
+    const validarTelefono = (numero) => {
     const regexTelefono = /^[0-9]{10}$/;
     return regexTelefono.test(numero);
+    };
+
+  const guardarNumeroEmergencia = async () => {
+    if (!validarTelefono(telefono)) {
+      return Alert.alert('Error', 'Por favor, ingresa un número de teléfono válido');
+    }
+    try {
+      await AsyncStorage.setItem('nroEmergencia', telefono);
+      setTelefonoGuardado(telefono);
+      Alert.alert('Guardado', 'El número de emergencia ha sido guardado correctamente');
+    } catch (error) {
+      console.error('Error al guardar el número de emergencia:', error); // Mensaje útil para depuración
+      Alert.alert('Error', 'No se pudo guardar el número de emergencia');
+    }
   };
 
   return (

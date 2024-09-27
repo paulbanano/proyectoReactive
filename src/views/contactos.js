@@ -17,49 +17,60 @@ const Contactos = () => {
     const obtenerNroEmergencia = async () => {
       try {
         let numero = await AsyncStorage.getItem('nroEmergencia');
-        if (numero) {
-          numero = numero.startsWith('+549') ? numero : '+549' + numero;
-          setNroEmergencia(normalizarNumero(numero));
-        }
+        if (!numero) return; // Si no hay número guardado, no es necesario continuar
+        numero = numero.startsWith('+549') ? numero : '+549' + numero;
+        setNroEmergencia(normalizarNumero(numero));
       } catch (error) {
+        console.error('Error al cargar el número de emergencia:', error);
         Alert.alert('Error', 'No se pudo cargar el número de emergencia');
       }
     };
+    
     obtenerNroEmergencia();
   }, []);
 
   useEffect(() => {
     const obtenerContactos = async () => {
-      const { status } = await Contacts.requestPermissionsAsync();
-      if (status === 'granted') {
+      try {
+        const { status } = await Contacts.requestPermissionsAsync();
+        if (status !== 'granted') {
+          return Alert.alert('Permiso denegado', 'Acceso a los contactos denegado');
+        }
+
         const { data } = await Contacts.getContactsAsync({
           fields: [Contacts.Fields.PhoneNumbers],
         });
-
-        if (data.length > 0) {
-          const contactosValidos = data.filter(c => c.name && c.phoneNumbers?.length > 0);
-          setListaContactos(contactosValidos);
+    
+        if (data.length === 0) {
+          return Alert.alert('No hay contactos', 'No se encontraron contactos en el teléfono');
         }
-      } else {
-        Alert.alert('Permiso denegado', 'Acceso a los contactos denegado');
+    
+        const contactosValidos = data.filter(c => c.name && c.phoneNumbers?.length > 0);
+        setListaContactos(contactosValidos);
+      } catch (error) {
+        console.error('Error al obtener contactos:', error);
+        Alert.alert('Error', 'No se pudo obtener la lista de contactos');
       }
     };
+    
     obtenerContactos();
   }, []);
 
-  const renderContacto = ({ item }) => {
-    const numeros = item.phoneNumbers?.map(phone => normalizarNumero(phone.number));
-    const esEmergencia = numeros?.some(num => num === nroEmergencia);
+const renderContacto = ({ item }) => {
+  const { name, phoneNumbers } = item;
+  const numeros = phoneNumbers?.map(phone => normalizarNumero(phone.number));
+  const esEmergencia = numeros?.includes(nroEmergencia);
 
-    return (
-      <View style={[styles.itemContacto, esEmergencia && styles.contactoEmergencia]}>
-        <View style={styles.detalleContacto}>
-          <Text style={styles.nombre}>{item.name}</Text>
-          <Text style={styles.numero}>{item.phoneNumbers[0]?.number}</Text>
-        </View>
+  return (
+    <View style={[styles.itemContacto, esEmergencia && styles.contactoEmergencia]}>
+      <View style={styles.detalleContacto}>
+        <Text style={styles.nombre}>{name}</Text>
+        <Text style={styles.numero}>{phoneNumbers[0]?.number}</Text>
       </View>
-    );
-  };
+    </View>
+  );
+};
+
 
   return (
     <View style={styles.contenedor}>

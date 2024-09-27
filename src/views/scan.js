@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, Modal, StyleSheet } from 'react-native';
-import { RNCamera } from 'react-native-camera';
+// import { RNCamera } from 'react-native-camera';
 
 const Scan = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,12 +32,12 @@ const Scan = () => {
             captureAudio={false}
           >
             <Text style={styles.text}>Escanea el código QR</Text>
-            <Button title="Cancelar" onPress={() => setIsScanning(false)} />
+            <Button title="Cerrar" onPress={() => setIsScanning(false)} />
           </RNCamera>
         </View>
       </Modal>
 
-      {/* Modal para mostrar los resultados escaneados */}
+      {/* Modal para mostrar datos escaneados */}
       <Modal
         transparent={true}
         visible={modalVisible}
@@ -45,7 +45,7 @@ const Scan = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          <Text style={styles.scannedText}>Datos escaneados: {scannedData}</Text>
+          <Text>Datos escaneados: {scannedData}</Text>
           <Button title="Cerrar" onPress={() => setModalVisible(false)} />
         </View>
       </Modal>
@@ -58,11 +58,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
+    fontSize: 20,
+    marginBottom: 20,
+  },
+  camera: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContainer: {
     flex: 1,
@@ -70,18 +74,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  camera: {
-    width: '100%',
-    height: '80%',
-  },
   text: {
     color: '#fff',
-    fontSize: 18,
-    textAlign: 'center',
-    margin: 20,
-  },
-  scannedText: {
-    color: '#000',
     fontSize: 18,
     marginBottom: 20,
   },

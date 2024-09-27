@@ -10,19 +10,23 @@ const Info = () => {
 
   useEffect(() => {
     const requestLocationPermission = async () => {
-      if (Platform.OS === 'android') {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          getLocation();
-        } else {
-          Alert.alert('Permiso denegado', 'No se pudo acceder a la ubicación');
+      try {
+        if (Platform.OS === 'android') {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+          );
+    
+          if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+            return Alert.alert('Permiso denegado', 'No se pudo acceder a la ubicación');
+          }
         }
-      } else {
-        getLocation(); // iOS
+        getLocation(); 
+      } catch (error) {
+        console.error('Error al solicitar permiso de ubicación:', error);
+        Alert.alert('Error', 'No se pudo solicitar el permiso de ubicación');
       }
     };
+    
 
     requestLocationPermission();
 
@@ -41,22 +45,26 @@ const Info = () => {
         getWeather(latitude, longitude);
       },
       error => {
+        console.error('Error al obtener ubicación:', error);
         Alert.alert('Error al obtener ubicación', error.message);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
     );
   };
+  
 
   const getWeather = async (latitude, longitude) => {
     try {
-      const response = await axios.get(
+      const { data } = await axios.get(
         `https://api.weatherapi.com/v1/current.json?key=YOUR_API_KEY&q=${latitude},${longitude}&aqi=no`
       );
-      setTemperature(response.data.current.temp_c);
+      setTemperature(data.current.temp_c);
     } catch (error) {
-      Alert.alert('Error al obtener el clima', error.message);
+      console.error('Error al obtener el clima:', error);
+      Alert.alert('Error al obtener el clima', 'No se pudo obtener la temperatura actual');
     }
   };
+  
 
   return (
     <View style={styles.container}>

@@ -6,8 +6,8 @@ const Home = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.buttonContainer}>
         <Button 
-          title="Emergencia" 
-          onPress={() => navigation.navigate('emergencia')} 
+          title="Numero de Emergencia" 
+          onPress={() => navigation.navigate('NroEmergencia')} 
         />
       </View>
       <View style={styles.buttonContainer}>
@@ -18,14 +18,14 @@ const Home = ({ navigation }) => {
       </View>
       <View style={styles.buttonContainer}>
         <Button 
-          title="Info" 
-          onPress={() => navigation.navigate('info')} 
+          title="Informacion" 
+          onPress={() => navigation.navigate('informacion')} 
         />
       </View>
       <View style={styles.buttonContainer}>
         <Button 
-          title="Contacto" 
-          onPress={() => navigation.navigate('contacto')} 
+          title="Contactos" 
+          onPress={() => navigation.navigate('contactos')} 
         />
       </View>
       <View style={styles.buttonContainer}>
